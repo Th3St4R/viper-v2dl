@@ -3,16 +3,18 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#f7fbf8">
+<meta name="color-scheme" content="light dark">
+<script>try{document.documentElement.dataset.theme=localStorage.getItem("viperping-theme")||(matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light")}catch(e){document.documentElement.dataset.theme="light"}</script>
 <meta name="description" content="آخرین نسخه رسمی v2rayNG و v2rayN برای اندروید، ویندوز، مک و لینوکس. دانلود مستقیم از GitHub سازنده.">
 <title>مرکز دانلود وایپرپینگ | Viper Ping</title>
 <link rel="icon" href="./favicon.png" type="image/png"><link rel="stylesheet" href="./style.css"><script defer src="./app.js"></script>
 </head>
 <body>
-<header class="topbar"><div class="wrap nav"><a class="brand" href="./" aria-label="وایپرپینگ"><img src="./viperping-logo.png" alt="VIPER PING"></a><div class="navlinks"><a href="https://t.me/viperping" target="_blank" rel="noopener noreferrer">کانال وایپرپینگ</a><a class="nav-cta" href="https://t.me/viperpingbot" target="_blank" rel="noopener noreferrer">خرید کانفیگ</a></div></div></header>
+<header class="topbar"><div class="wrap nav"><a class="brand" href="./" aria-label="وایپرپینگ"><img src="./viperping-logo.png" alt="VIPER PING"></a><div class="navlinks"><button class="theme-toggle" type="button" id="theme-toggle" aria-label="تغییر تم شب و روز" aria-pressed="false"><span id="theme-icon" aria-hidden="true">☾</span><span id="theme-label">تم شب</span></button><a href="https://t.me/viperping" target="_blank" rel="noopener noreferrer">کانال وایپرپینگ</a><a class="nav-cta" href="https://t.me/viperpingbot" target="_blank" rel="noopener noreferrer">خرید کانفیگ</a></div></div></header>
 <main class="wrap">
 <section class="intro"><div class="intro-text"><span class="kicker">مرکز دانلود وایپرپینگ</span><h1>آخرین نسخه برنامه‌ات، <span>همین‌جا آماده دانلود.</span></h1><p>اندروید، ویندوز، لینوکس یا مک؟ دستگاهت رو انتخاب کن و نسخه اصلی برنامه رو مستقیم از GitHub بگیر.</p></div></section>
 <section id="download" class="downloads" aria-labelledby="downloads-title">
-<div class="section-head"><div><h2 id="downloads-title">برای چه دستگاهی می‌خوای؟</h2><p>دستگاهت رو انتخاب کن و فایل مناسبش رو دانلود کن.</p></div><span id="api-status" class="status" role="status" aria-live="polite"><i></i>در حال دریافت نسخه‌ها</span></div>
+<div class="section-head"><div><h2 id="downloads-title">برای چه دستگاهی می‌خوای؟</h2><p>دستگاهت رو انتخاب کن و فایل مناسبش رو دانلود کن.</p><p id="device-hint" class="device-hint" aria-live="polite"></p></div><span id="api-status" class="status" role="status" aria-live="polite"><i></i>در حال دریافت نسخه‌ها</span></div>
 <div class="platforms" role="tablist" aria-label="انتخاب دستگاه">
 <button type="button" class="platform active" data-platform="android" role="tab" aria-selected="true" aria-controls="release-content"><span class="platform-icon" aria-hidden="true">◉</span><span><b>اندروید</b><small>v2rayNG</small></span></button>
 <button type="button" class="platform" data-platform="windows" role="tab" aria-selected="false" aria-controls="release-content"><span class="platform-icon" aria-hidden="true">⊞</span><span><b>ویندوز</b><small>v2rayN</small></span></button>
@@ -23,5 +25,13 @@
 <p class="footnote">فایل‌ها از GitHub رسمی سازنده دریافت می‌شن؛ هیچ فایلی روی سرور وایپرپینگ میزبانی نمی‌شه.</p>
 </section>
 </main>
-<footer class="footer"><div class="wrap foot"><span>© <span id="year">2026</span> VIPER PING</span><div><a href="https://t.me/viperpingbot" target="_blank" rel="noopener noreferrer">خرید سرویس | @viperpingbot</a><a href="https://t.me/viperping" target="_blank" rel="noopener noreferrer">کانال | @viperping</a></div></div></footer>
+<footer class="footer">
+<div class="wrap">
+<section class="footer-promo" aria-labelledby="footer-promo-title">
+<div class="promo-copy"><span class="promo-eyebrow">VIPER PING</span><h2 id="footer-promo-title">سرویس پر سرعت هم نیاز داری؟</h2><p>برای یه اتصال سریع و پایدار، سرویس‌های وایپرپینگ مناسب خودته. از طریق ربات می‌تونی سرویس مناسب خودت رو انتخاب کنی؛ خبرها و آپدیت‌ها هم توی کانالمونه.</p></div>
+<div class="promo-actions"><a class="promo-buy" href="https://t.me/viperpingbot" target="_blank" rel="noopener noreferrer">خرید سرویس | <span dir="ltr">@viperpingbot</span></a><a class="promo-channel" href="https://t.me/viperping" target="_blank" rel="noopener noreferrer">کانال | <span dir="ltr">@viperping</span></a></div>
+</section>
+<div class="foot"><span>© <span id="year">2026</span> VIPER PING</span><span>مرکز دانلود وایپرپینگ</span></div>
+</div>
+</footer>
 </body></html>

@@ -2,7 +2,50 @@
 'use strict';
 const P={android:{repo:'v2rayNG',label:'اندروید',app:'v2rayNG'},windows:{repo:'v2rayN',label:'ویندوز',app:'v2rayN'},macos:{repo:'v2rayN',label:'مک',app:'v2rayN'},linux:{repo:'v2rayN',label:'لینوکس',app:'v2rayN'}};
 const panel=document.getElementById('release-content'),status=document.getElementById('api-status');
-const cache=new Map();let platform='android',serial=0;
+const cache=new Map();let platform='android',serial=0,selectedManually=false,device={platform:null,arch:null};
+const labels={android:'اندروید',windows:'ویندوز',macos:'مک',linux:'لینوکس'};
+function detectDevice(){
+  const ua=navigator.userAgent||'', p=(navigator.userAgentData?.platform||navigator.platform||'').toLowerCase();
+  let platform=null,arch=null;
+  if(/android/i.test(ua)||/android/.test(p))platform='android';
+  else if(/iphone|ipad|ipod/i.test(ua)||/iphone|ipad|ipod/.test(p))platform='ios';
+  else if(/windows|win32|win64/i.test(ua)||/win/.test(p))platform='windows';
+  else if(/macintosh|mac os x/i.test(ua)||/mac/.test(p))platform='macos';
+  else if(/linux|x11/i.test(ua)||/linux/.test(p))platform='linux';
+  if(/arm64|aarch64/i.test(ua))arch='arm64';
+  else if(/x86_64|amd64|win64|x64|wow64/i.test(ua))arch='x64';
+  else if(/i[3-6]86|x86(?!_64)/i.test(ua))arch='x86';
+  return {platform,arch};
+}
+function setActivePlatform(key){
+  if(!P[key])return;
+  platform=key;
+  for(const b of document.querySelectorAll('.platform')){
+    const active=b.dataset.platform===key;b.classList.toggle('active',active);b.setAttribute('aria-selected',String(active));
+  }
+}
+function updateDeviceHint(){
+ const hint=document.getElementById('device-hint');if(!hint)return;
+ if(device.platform==='ios')hint.textContent='دستگاه شما iPhone یا iPad است؛ این دو برنامه نسخه رسمی iOS ندارند. می‌تونی دستگاه دیگه‌ای انتخاب کنی.';
+ else if(device.platform&&P[device.platform])hint.textContent='✓ '+labels[device.platform]+' شما به‌صورت خودکار شناسایی شد؛ در صورت نیاز می‌تونی دستگاه رو تغییر بدی.';
+ else hint.textContent='دستگاهت رو از گزینه‌های زیر انتخاب کن.';
+}
+function preferredAsset(key,items){
+ if(device.platform!==key)return null;
+ const a=device.arch;
+ if(key==='android')return items.find(x=>/universal/i.test(x.a.name))||null;
+ if(!a)return null;
+ if(key==='windows')return items.find(x=>a==='arm64'?/windows-arm64\.zip$/i.test(x.a.name):a==='x86'?/windows-(86|32)\.zip$/i.test(x.a.name):/windows-64\.zip$/i.test(x.a.name))||null;
+ if(key==='macos')return items.find(x=>a==='arm64'?/macos-arm64\.dmg$/i.test(x.a.name):a==='x64'?/macos-64\.dmg$/i.test(x.a.name):false)||null;
+ if(key==='linux')return items.find(x=>a==='arm64'?/linux-arm64\.zip$/i.test(x.a.name):a==='x64'?/linux-64\.zip$/i.test(x.a.name):false)||null;
+ return null;
+}
+function initTheme(){
+ const button=document.getElementById('theme-toggle');
+ function paint(){const dark=document.documentElement.dataset.theme==='dark';document.getElementById('theme-icon').textContent=dark?'☀':'☾';document.getElementById('theme-label').textContent=dark?'تم روشن':'تم شب';button.setAttribute('aria-pressed',String(dark));document.querySelector('meta[name="theme-color"]').content=dark?'#0b1713':'#f7fbf8'}
+ button.addEventListener('click',()=>{const next=document.documentElement.dataset.theme==='dark'?'light':'dark';document.documentElement.dataset.theme=next;try{localStorage.setItem('viperping-theme',next)}catch(e){}paint()});paint();
+}
+
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const official=repo=>`https://github.com/2dust/${repo}/releases`;
 const size=s=>s?`${(s/1048576).toFixed(1)} MB`:'';
@@ -17,11 +60,19 @@ windows:[['ویندوز ۶۴ بیت','مناسب بیشتر کامپیوترها
 macos:[['مک با تراشه Apple Silicon','M1، M2، M3، M4 و جدیدتر',n=>/macos-arm64\.dmg$/.test(n)],['مک با پردازنده Intel','نسخه Intel',n=>/macos-64\.dmg$/.test(n)],['Apple Silicon — ZIP','نسخه فشرده',n=>/macos-arm64\.zip$/.test(n)],['Intel — ZIP','نسخه فشرده',n=>/macos-64\.zip$/.test(n)]],
 linux:[['Ubuntu / Debian — ۶۴ بیت','فایل DEB',n=>/linux-64\.deb$/.test(n)],['Ubuntu / Debian — ARM64','فایل DEB',n=>/linux-arm64\.deb$/.test(n)],['Fedora / RHEL — ۶۴ بیت','فایل RPM',n=>/linux-(rhel-)?(x64|64)\.rpm$/.test(n)],['Fedora / RHEL — ARM64','فایل RPM',n=>/linux-(rhel-)?arm64\.rpm$/.test(n)],['نسخه پرتابل — ۶۴ بیت','فایل ZIP',n=>/linux-64\.zip$/.test(n)],['نسخه پرتابل — ARM64','فایل ZIP',n=>/linux-arm64\.zip$/.test(n)]]};
 function choices(assets,key){const used=new Set(),out=[];for(const [title,desc,match] of specs[key]){const a=assets.find(a=>!used.has(a.name)&&match(a.name.toLowerCase()));if(a){used.add(a.name);out.push({title,desc,a})}}if(key==='android'&&!out.length){for(const a of assets.filter(x=>/\.apk$/i.test(x.name)).slice(0,4))out.push({title:a.name.replace(/\.apk$/i,''),desc:'نسخه اندروید',a})}return out}
-function draw(release,items,key){const info=P[key];statusSet('آخرین نسخه آماده‌ست');let html=`<div class="result-head"><div><h3>دانلود <span class="latin">${info.app}</span> برای ${info.label}</h3><p class="result-sub">نسخه رسمی و به‌روز</p></div><span class="version">${esc(release.tag_name)}</span></div>`;
-if(!items.length){html+=`<div class="empty"><h3>فایل مناسب پیدا نشد</h3><p>برای دیدن همه نسخه‌ها از GitHub رسمی استفاده کن.</p></div>`}else{html+='<div class="choices">'+items.map(({title,desc,a},i)=>`<div class="choice${i===0?' primary':''}"><div class="choice-info"><b>${esc(title)}</b><p>${esc(desc)}</p><small>${esc(size(a.size))}</small></div><a class="download-btn" href="${esc(assetUrl(a,info.repo))}" target="_blank" rel="noopener noreferrer" aria-label="دانلود ${esc(title)}">↓ دانلود</a></div>`).join('')+'</div>'}
+function draw(release,items,key){const info=P[key];statusSet('آخرین نسخه آماده‌ست');const recommended=preferredAsset(key,items);if(recommended)items=[recommended,...items.filter(x=>x!==recommended)];let html=`<div class="result-head"><div><h3>دانلود <span class="latin">${info.app}</span> برای ${info.label}</h3><p class="result-sub">نسخه رسمی و به‌روز</p></div><span class="version">${esc(release.tag_name)}</span></div>`;
+if(!items.length){html+=`<div class="empty"><h3>فایل مناسب پیدا نشد</h3><p>برای دیدن همه نسخه‌ها از GitHub رسمی استفاده کن.</p></div>`}else{html+='<div class="choices">'+items.map(({title,desc,a},i)=>`<div class="choice${recommended&&a.name===recommended.a.name?' primary':''}"><div class="choice-info"><b>${esc(title)}${recommended&&a.name===recommended.a.name?' <span class="recommend-tag">پیشنهاد برای دستگاه شما</span>':''}</b><p>${esc(desc)}</p><small>${esc(size(a.size))}</small></div><a class="download-btn" href="${esc(assetUrl(a,info.repo))}" target="_blank" rel="noopener noreferrer" aria-label="دانلود ${esc(title)}">↓ دانلود</a></div>`).join('')+'</div>'}
 html+=`<div class="result-bottom"><a class="official" href="${official(info.repo)}" target="_blank" rel="noopener noreferrer">مشاهده همه فایل‌ها در GitHub ↗</a></div>`;panel.innerHTML=html}
 function error(e,key){statusSet('دریافت نسخه ناموفق بود',true);panel.innerHTML=`<div class="empty"><h3>فعلاً نتونستیم نسخه‌ها رو بگیریم</h3><p>${esc(e.message)}. دوباره تلاش کن یا از GitHub رسمی دانلود کن.</p><button class="retry" type="button">تلاش دوباره</button><p><a class="official" href="${official(P[key].repo)}" target="_blank" rel="noopener noreferrer">دانلود از GitHub رسمی ↗</a></p></div>`;panel.querySelector('.retry').addEventListener('click',()=>{cache.delete(P[key].repo);update()})}
 async function update(){const key=platform,id=++serial;loading();try{const releases=await fetchReleases(P[key].repo);if(id!==serial)return;const r=releases.find(x=>assetsFor(x,key).length);if(!r)throw new Error('نسخه‌ای برای این دستگاه پیدا نشد');draw(r,choices(assetsFor(r,key),key),key)}catch(e){if(id===serial)error(e,key)}}
-for(const btn of document.querySelectorAll('.platform'))btn.addEventListener('click',()=>{if(btn.dataset.platform===platform)return;platform=btn.dataset.platform;for(const b of document.querySelectorAll('.platform')){const active=b===btn;b.classList.toggle('active',active);b.setAttribute('aria-selected',String(active))}update()});
-document.getElementById('year').textContent=new Date().getFullYear();update();
+for(const btn of document.querySelectorAll('.platform'))btn.addEventListener('click',()=>{selectedManually=true;if(btn.dataset.platform===platform)return;setActivePlatform(btn.dataset.platform);update()});
+document.getElementById('year').textContent=new Date().getFullYear();
+initTheme();device=detectDevice();if(P[device.platform])setActivePlatform(device.platform);updateDeviceHint();update();
+// User-agent client hints can identify CPU architecture on some browsers; never guess when unavailable.
+if(navigator.userAgentData?.getHighEntropyValues){navigator.userAgentData.getHighEntropyValues(['architecture','bitness']).then(v=>{
+  if(v.architecture==='arm')device.arch='arm64';
+  else if(v.architecture==='x86')device.arch=v.bitness==='64'?'x64':'x86';
+  if(!selectedManually&&P[device.platform])update();
+}).catch(()=>{});}
+
 })();
