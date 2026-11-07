@@ -3,57 +3,69 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#0b1225">
-  <meta name="description" content="دانلود آخرین نسخه رسمی v2rayNG و v2rayN برای اندروید، ویندوز، لینوکس و مک؛ به‌روزرسانی خودکار از GitHub توسط Viper Ping.">
-  <title>دانلود V2Ray | Viper Ping</title>
+  <meta name="theme-color" content="#f6faf7">
+  <meta name="description" content="دانلود راحت و مستقیم آخرین نسخه v2rayNG برای اندروید و v2rayN برای ویندوز، لینوکس و مک. مرکز دانلود وایپرپینگ، همراه با لینک ربات خرید و کانال تلگرام.">
+  <meta property="og:title" content="مرکز دانلود وایپرپینگ | Viper Ping">
+  <meta property="og:description" content="برنامه اتصال موردنیازت رو راحت پیدا کن و نسخه اصلیش رو مستقیم از گیت‌هاب بگیر.">
+  <meta property="og:type" content="website">
+  <title>مرکز دانلود وایپرپینگ | Viper Ping</title>
   <link rel="icon" type="image/svg+xml" href="./favicon.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="./style.css">
   <script src="./app.js" defer></script>
 </head>
 <body>
-  <div class="ambient ambient-one" aria-hidden="true"></div><div class="ambient ambient-two" aria-hidden="true"></div>
-  <div class="page">
-    <header class="site-header">
-      <a class="brand" href="./" aria-label="Viper Ping — صفحه اصلی دانلود">
-        <span class="brand-icon">V<span class="brand-dot">.</span></span>
-        <span class="brand-copy"><strong>VIPER PING</strong><small>DOWNLOAD CENTER</small></span>
-      </a>
-      <a class="header-link" href="https://github.com/2dust" target="_blank" rel="noopener noreferrer">منبع رسمی <span aria-hidden="true">↗</span></a>
-    </header>
+  <div class="top-note"><div class="wrap top-note-inner"><span><span class="top-note-spark">✦</span> وایپرپینگ؛ یه راه راحت‌تر برای دانلود برنامه‌های اتصال</span><a href="https://t.me/viperping" target="_blank" rel="noopener noreferrer">خبرهای جدید رو توی کانالمون ببین <span aria-hidden="true">↗</span></a></div></div>
 
-    <main>
-      <section class="hero" aria-labelledby="hero-title">
-        <span class="eyebrow"><span class="pulse"></span> اتصال مستقیم به GitHub Releases</span>
-        <h1 id="hero-title">همیشه <span>آخرین نسخه</span> رو دانلود کن.</h1>
-        <p>نسخه رسمی V2Ray برای دستگاهت، بدون لینک‌های قدیمی و بدون نیاز به آپدیت دستی سایت.</p>
-        <div class="hero-chips"><span>✓ فایل اصلی توسعه‌دهنده</span><span>✓ نسخه‌های قبلی</span><span>✓ اندروید و دسکتاپ</span></div>
-      </section>
+  <header class="site-header wrap">
+    <a class="brand" href="./" aria-label="وایپرپینگ، صفحه اصلی">
+      <span class="brand-logo" aria-hidden="true"><svg viewBox="0 0 56 56" fill="none"><path d="M11 15L24 41H31L45 15H35L28 30L21 15H11Z" fill="white"/><circle cx="42" cy="40" r="4" fill="#A7F3D0"/></svg></span>
+      <span class="brand-text"><strong>VIPER<span>PING</span></strong><small>مرکز دانلود وایپرپینگ</small></span>
+    </a>
+    <nav class="nav-links" aria-label="فهرست اصلی"><a href="#downloads">دانلود برنامه‌ها</a><a href="#guide">راهنمای کوتاه</a><a href="#faq">سؤال‌های رایج</a></nav>
+    <a class="header-cta" href="https://t.me/viperpingbot" target="_blank" rel="noopener noreferrer"><svg class="telegram-icon" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M21.8 4.5 18.5 20c-.2 1.1-.9 1.4-1.8.9l-5.1-3.8-2.5 2.4c-.3.3-.5.5-1 .5l.4-5.2L18 6.2c.4-.4-.1-.6-.6-.3L5.6 13.3l-5-1.6c-1.1-.3-1.1-1.1.2-1.6L20.4 2.5c.9-.3 1.7.2 1.4 2Z"/></svg> خرید کانفیگ</a>
+  </header>
 
-      <section class="download-panel" aria-label="مرکز دانلود">
-        <div class="panel-heading"><div><span class="kicker">SELECT YOUR DEVICE</span><h2>سیستم‌عاملت رو انتخاب کن</h2></div><span class="live-pill" id="api-status"><span class="status-dot"></span> در حال بررسی</span></div>
-        <div class="platform-tabs" role="tablist" aria-label="سیستم‌عامل">
-          <button class="platform-tab active" role="tab" aria-selected="true" data-platform="android" type="button"><span class="platform-emoji">◉</span><span>اندروید</span><small>v2rayNG</small></button>
-          <button class="platform-tab" role="tab" aria-selected="false" data-platform="windows" type="button"><span class="platform-emoji">⊞</span><span>ویندوز</span><small>v2rayN</small></button>
-          <button class="platform-tab" role="tab" aria-selected="false" data-platform="linux" type="button"><span class="platform-emoji">⌘</span><span>لینوکس</span><small>v2rayN</small></button>
-          <button class="platform-tab" role="tab" aria-selected="false" data-platform="macos" type="button"><span class="platform-emoji">●</span><span>مک‌او‌اس</span><small>v2rayN</small></button>
-        </div>
+  <main>
+    <section class="hero wrap" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <span class="eyebrow"><span class="eyebrow-dot"></span> دانلود سریع، مستقیم و بدون دردسر</span>
+        <h1 id="hero-title">برنامه اتصال رو <span>راحت پیدا کن.</span></h1>
+        <p>فرقی نداره گوشی اندرویدی داری یا کامپیوتر؛ اینجا آخرین نسخه برنامه‌های <bdi>v2rayNG</bdi> و <bdi>v2rayN</bdi> رو برات پیدا می‌کنیم. فقط دستگاهت رو انتخاب کن و دانلودش کن.</p>
+        <div class="hero-actions"><a class="btn btn-primary" href="#downloads">بریم سراغ دانلود <span aria-hidden="true">↙</span></a><a class="btn btn-outline" href="https://t.me/viperpingbot" target="_blank" rel="noopener noreferrer">خرید سرویس وایپرپینگ <span aria-hidden="true">↗</span></a></div>
+        <div class="hero-trust"><span><span class="trust-check">✓</span> لینک فایل اصلی</span><span><span class="trust-check">✓</span> نسخه‌های جدید و قدیمی</span><span><span class="trust-check">✓</span> بدون نیاز به ثبت‌نام</span></div>
+      </div>
+      <div class="hero-art" aria-hidden="true">
+        <div class="orbit orbit-one"></div><div class="orbit orbit-two"></div>
+        <div class="float-badge float-badge-top"><span class="float-icon">↗</span><span>دریافت از GitHub<br><small>لینک رسمی سازنده</small></span></div>
+        <div class="showcase-card"><div class="showcase-head"><div class="showcase-dots"><i></i><i></i><i></i></div><span>VIPER PING</span></div><div class="showcase-body"><div class="showcase-mark"><svg viewBox="0 0 56 56" fill="none"><path d="M11 15L24 41H31L45 15H35L28 30L21 15H11Z" fill="white"/><circle cx="42" cy="40" r="4" fill="#A7F3D0"/></svg></div><strong>همیشه آماده اتصال</strong><span>نسخه مناسب دستگاهت، همین‌جا</span><div class="showcase-progress"><span></span></div><div class="showcase-status"><span>آخرین نسخه‌ها</span><b>● به‌روز</b></div></div></div>
+        <div class="float-badge float-badge-bottom"><span class="float-icon">✓</span><span>انتخاب آسون‌تر<br><small>اندروید، ویندوز، لینوکس و مک</small></span></div>
+      </div>
+    </section>
 
-        <div class="release-content" id="release-content" aria-live="polite">
-          <div class="loading"><div class="loader"></div><strong>در حال دریافت اطلاعات از GitHub...</strong><p>چند لحظه صبر کن</p></div>
-        </div>
-      </section>
+    <section class="download-section" id="downloads" aria-labelledby="download-title"><div class="wrap">
+      <div class="section-intro"><div><span class="section-label">دانلود برنامه‌ها</span><h2 id="download-title">از چه دستگاهی استفاده می‌کنی؟</h2><p>یکی از گزینه‌ها رو بزن تا فایل‌های مناسب همون دستگاه رو ببینی.</p></div><span class="api-pill" id="api-status" role="status"><span class="api-dot"></span> در حال بررسی نسخه‌ها</span></div>
+      <div class="platform-grid" role="tablist" aria-label="انتخاب سیستم‌عامل">
+        <button class="platform-tab active" role="tab" aria-selected="true" data-platform="android" type="button"><span class="platform-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="m7 5-2-2m12 2 2-2M5 10a7 7 0 0 1 14 0H5Zm0 3h14v5a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-5ZM3 13v5m18-5v5M9 20v2m6-2v2"/><circle cx="9" cy="8" r=".7" fill="currentColor" stroke="none"/><circle cx="15" cy="8" r=".7" fill="currentColor" stroke="none"/></svg></span><strong>اندروید</strong><small>v2rayNG</small></button>
+        <button class="platform-tab" role="tab" aria-selected="false" data-platform="windows" type="button"><span class="platform-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 5.1 10.5 4v7.5H2V5.1Zm10.1-1.3L22 2.5v9h-9.9V3.8ZM2 13h8.5v7.5L2 19.3V13Zm10.1 0H22v9l-9.9-1.4V13Z"/></svg></span><strong>ویندوز</strong><small>v2rayN</small></button>
+        <button class="platform-tab" role="tab" aria-selected="false" data-platform="linux" type="button"><span class="platform-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="m7 9 3 3-3 3m6 0h4" stroke-linecap="round"/></svg></span><strong>لینوکس</strong><small>v2rayN</small></button>
+        <button class="platform-tab" role="tab" aria-selected="false" data-platform="macos" type="button"><span class="platform-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.8 12.7c0-2 1.7-3 1.8-3.1-1-1.5-2.6-1.7-3.2-1.7-1.4-.2-2.7.9-3.4.9s-1.8-.9-2.9-.8c-1.5 0-2.8.9-3.5 2.1-1.5 2.6-.4 6.5 1.1 8.7.8 1.1 1.6 2.2 2.8 2.2s1.6-.7 3-.7 1.8.7 3 .7 2-1.1 2.7-2.2c.8-1.2 1.2-2.3 1.2-2.4-.1 0-2.6-1-2.6-3.7ZM14.5 6.5c.6-.7 1-1.7.9-2.7-.9 0-2 .6-2.6 1.3-.6.7-1.1 1.7-1 2.6 1 0 2-.5 2.7-1.2Z"/></svg></span><strong>مک</strong><small>v2rayN</small></button>
+      </div>
+      <div class="release-shell"><div id="release-content" class="release-content" aria-live="polite"><div class="loading"><div class="loader"></div><strong>داریم آخرین نسخه‌ها رو پیدا می‌کنیم...</strong><p>یه لحظه صبر کن</p></div></div></div>
+      <p class="download-footnote">فایل‌ها مستقیم از مخزن رسمی توسعه‌دهنده در GitHub دانلود می‌شن. وایپرپینگ فایل برنامه‌ها رو دست‌کاری نمی‌کنه.</p>
+    </div></section>
 
-      <section class="info-grid" aria-label="اطلاعات دانلود">
-        <div class="info-card"><span class="info-icon">↗</span><h3>مستقیم از منبع اصلی</h3><p>فایل‌ها روی سرور ما ذخیره نمی‌شن؛ لینک دانلود به GitHub رسمی سازنده می‌ره.</p></div>
-        <div class="info-card"><span class="info-icon">↻</span><h3>به‌روزرسانی خودکار</h3><p>هر بار صفحه رو باز کنی، نسخه پایدار جدید از API گیت‌هاب بررسی می‌شه.</p></div>
-        <div class="info-card"><span class="info-icon">▤</span><h3>نسخه‌های قدیمی</h3><p>می‌تونی نسخه‌های قبلی و در صورت نیاز نسخه‌های آزمایشی رو هم انتخاب کنی.</p></div>
-      </section>
-    </main>
+    <section class="guide-section wrap" id="guide"><div class="section-intro simple"><div><span class="section-label">خیلی ساده‌ست</span><h2>سه قدم تا راه‌اندازی</h2><p>اگه اولین باره از این برنامه‌ها استفاده می‌کنی، از اینجا شروع کن.</p></div></div>
+      <div class="steps"><article class="step"><span class="step-no">۰۱</span><div class="step-icon">↓</div><h3>برنامه رو دانلود کن</h3><p>دستگاهت رو انتخاب کن و نسخه مناسب رو از همین صفحه بگیر.</p></article><article class="step"><span class="step-no">۰۲</span><div class="step-icon">◇</div><h3>برنامه رو نصب کن</h3><p>فایل دانلودشده رو باز کن و مراحل نصب رو مثل هر برنامه دیگه ادامه بده.</p></article><article class="step"><span class="step-no">۰۳</span><div class="step-icon">↗</div><h3>کانفیگت رو اضافه کن</h3><p>اگه هنوز سرویس نداری، از ربات وایپرپینگ می‌تونی تهیه‌ش کنی.</p></article></div>
+    </section>
 
-    <footer class="site-footer"><div>ساخته‌شده برای <strong>VIPER PING</strong> <span class="footer-separator">•</span> یک ابزار مستقل و غیررسمی</div><div>منابع: <a href="https://github.com/2dust/v2rayNG/releases" target="_blank" rel="noopener noreferrer">v2rayNG</a> / <a href="https://github.com/2dust/v2rayN/releases" target="_blank" rel="noopener noreferrer">v2rayN</a></div></footer>
-  </div>
+    <section class="telegram-section wrap" aria-label="راه‌های ارتباط با وایپرپینگ"><div class="telegram-panel"><div class="telegram-copy"><span class="telegram-eyebrow">همراهت هستیم 💚</span><h2>کانفیگ می‌خوای یا دنبال خبرهای جدیدی؟</h2><p>برای تهیه سرویس از ربات وایپرپینگ استفاده کن. اطلاعیه‌ها و خبرهای جدیدمون هم توی کانال تلگرام منتشر می‌شن.</p><div class="telegram-actions"><a class="btn btn-white" href="https://t.me/viperpingbot" target="_blank" rel="noopener noreferrer">ربات خرید کانفیگ <bdi>@viperpingbot</bdi> ↗</a><a class="btn btn-ghost" href="https://t.me/viperping" target="_blank" rel="noopener noreferrer">کانال وایپرپینگ <bdi>@viperping</bdi> ↗</a></div></div><div class="telegram-decoration" aria-hidden="true"><div class="telegram-big-icon">➤</div><div class="telegram-mini">VIPER PING <span>●</span></div></div></div></section>
+
+    <section class="faq-section wrap" id="faq"><div class="section-intro simple"><div><span class="section-label">سؤال‌های رایج</span><h2>شاید سؤال تو هم همین‌جا باشه</h2></div></div><div class="faq-list"><details><summary>این فایل‌ها واقعاً آخرین نسخه هستن؟ <span>+</span></summary><p>سایت هر بار اطلاعات نسخه‌ها رو از GitHub سازنده بررسی می‌کنه. اگه ارتباط با GitHub برقرار نباشه، لینک صفحه رسمی دانلود رو بهت نشون می‌دیم.</p></details><details><summary>کدوم فایل رو برای اندروید دانلود کنم؟ <span>+</span></summary><p>برای بیشتر گوشی‌ها نسخه Universal انتخاب راحتیه. اگه معماری دستگاهت رو می‌دونی، می‌تونی فایل مخصوص همون معماری رو بگیری.</p></details><details><summary>برای استفاده از برنامه‌ها کانفیگ هم لازمه؟ <span>+</span></summary><p>بله، نصب برنامه به‌تنهایی سرویس اتصال ایجاد نمی‌کنه. برای تهیه کانفیگ وایپرپینگ می‌تونی به <a href="https://t.me/viperpingbot" target="_blank" rel="noopener noreferrer">@viperpingbot</a> سر بزنی.</p></details><details><summary>از کجا خبر آپدیت‌ها و اطلاعیه‌ها رو بگیرم؟ <span>+</span></summary><p>توی کانال <a href="https://t.me/viperping" target="_blank" rel="noopener noreferrer">@viperping</a> همراه ما باش تا خبرهای جدید رو از دست ندی.</p></details></div></section>
+  </main>
+
+  <footer class="site-footer"><div class="wrap footer-main"><div class="footer-about"><a class="brand footer-brand" href="./"><span class="brand-logo" aria-hidden="true"><svg viewBox="0 0 56 56" fill="none"><path d="M11 15L24 41H31L45 15H35L28 30L21 15H11Z" fill="white"/><circle cx="42" cy="40" r="4" fill="#A7F3D0"/></svg></span><span class="brand-text"><strong>VIPER<span>PING</span></strong><small>مرکز دانلود وایپرپینگ</small></span></a><p>یه جای ساده برای پیدا کردن برنامه‌های موردنیازت. امیدواریم به کارت بیاد!</p></div><div class="footer-links"><h3>دسترسی سریع</h3><a href="#downloads">دانلود برنامه‌ها</a><a href="#guide">راهنمای شروع</a><a href="#faq">سؤال‌های رایج</a></div><div class="footer-links"><h3>ارتباط با وایپرپینگ</h3><a href="https://t.me/viperpingbot" target="_blank" rel="noopener noreferrer">ربات خرید — @viperpingbot</a><a href="https://t.me/viperping" target="_blank" rel="noopener noreferrer">کانال تلگرام — @viperping</a></div></div><div class="wrap footer-bottom"><span>© وایپرپینگ — با 💚 برای شما</span><span>v2rayNG و v2rayN محصول وایپرپینگ نیستند؛ <a href="https://github.com/2dust/v2rayNG/releases" target="_blank" rel="noopener noreferrer">سازنده v2rayNG</a> · <a href="https://github.com/2dust/v2rayN/releases" target="_blank" rel="noopener noreferrer">سازنده v2rayN</a></span></div></footer>
 </body>
 </html>
