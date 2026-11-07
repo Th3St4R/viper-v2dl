@@ -1,134 +1,27 @@
-/* Viper Ping — latest official stable downloads from GitHub Releases. */
 (() => {
-  'use strict';
-  const PLATFORMS = {
-    android: {repo:'v2rayNG', title:'v2rayNG', name:'اندروید'},
-    windows: {repo:'v2rayN', title:'v2rayN', name:'ویندوز'},
-    linux:   {repo:'v2rayN', title:'v2rayN', name:'لینوکس'},
-    macos:   {repo:'v2rayN', title:'v2rayN', name:'مک'}
-  };
-  const state = {platform:'android', requestId:0};
-  const cache = new Map();
-  const panel = document.getElementById('release-content');
-  const status = document.getElementById('api-status');
-  const esc = x => String(x ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  const repoPage = repo => `https://github.com/2dust/${repo}/releases`;
-  const formatSize = size => size ? `${(size/1048576).toFixed(1)} MB` : '';
-  const formatDate = iso => {
-    const d = new Date(iso);
-    return Number.isNaN(d.getTime()) ? '' : d.toLocaleDateString('fa-IR', {year:'numeric',month:'long',day:'numeric'});
-  };
-  function validAssetUrl(asset, repo) {
-    try {
-      const u = new URL(asset.browser_download_url);
-      return u.protocol === 'https:' && u.hostname === 'github.com' && u.pathname.startsWith(`/2dust/${repo}/releases/download/`) ? u.href : '';
-    } catch {return '';}
-  }
-  function matchingAssets(release, platform) {
-    const repo = PLATFORMS[platform].repo;
-    return (release.assets || []).filter(asset => {
-      const name = String(asset.name || '').toLowerCase();
-      if (!validAssetUrl(asset, repo) || /(?:\.sha\d*|\.sig|\.asc|\.txt|\.json|\.md5)$/i.test(name)) return false;
-      if (platform === 'android') return /\.apk$/.test(name);
-      if (platform === 'windows') return /(?:windows|win32|win64|[-_]win[-_.])/i.test(name) && /\.(?:zip|7z|exe|msi)$/i.test(name);
-      if (platform === 'linux') return /linux/i.test(name) && /(?:\.tar\.gz|\.appimage|\.deb|\.rpm|\.zip)$/i.test(name);
-      return /(?:macos|mac[-_.]|osx|darwin)/i.test(name) && /(?:\.zip|\.dmg|\.pkg|\.tar\.gz)$/i.test(name);
-    });
-  }
-  function arch(name) {
-    const n = name.toLowerCase();
-    if (/universal/.test(n)) return 'Universal';
-    if (/arm64|aarch64|arm64-v8a/.test(n)) return 'ARM64';
-    if (/armeabi|armv7|arm32/.test(n)) return 'ARM32';
-    if (/x86_64|x64|amd64|[-_]64(?:[-_.]|$)/.test(n)) return '64-bit';
-    if (/x86|i386|[-_]32(?:[-_.]|$)/.test(n)) return '32-bit';
-    return 'سایر';
-  }
-  function pickPreferred(assets, platform) {
-    return [...assets].sort((a,b) => {
-      function score(asset) {
-        const n = asset.name.toLowerCase();
-        if (platform === 'android') return (/universal/.test(n)?0:/arm64/.test(n)?2:5) + (/fdroid/.test(n)?2:0);
-        if (platform === 'windows') return (/x64|amd64|[-_]64(?:[-_.]|$)/.test(n)?0:/arm64/.test(n)?3:5) + (/selfcontained/.test(n)?0:1) + (/\.zip$/.test(n)?0:2);
-        if (platform === 'macos') return (/arm64|aarch64/.test(n)?0:/x64|amd64|[-_]64(?:[-_.]|$)/.test(n)?1:3) + (/\.zip$/.test(n)?0:1);
-        return (/x64|amd64|[-_]64(?:[-_.]|$)/.test(n)?0:/arm64|aarch64/.test(n)?2:4) + (/\.deb$/.test(n)?0:1);
-      }
-      return score(a)-score(b);
-    })[0];
-  }
-  function setStatus(message, error=false) {
-    status.className = 'status' + (error ? ' error' : '');
-    status.innerHTML = `<span class="status-dot"></span>${esc(message)}`;
-  }
-  async function getReleases(repo) {
-    const cached = cache.get(repo);
-    if (cached && Date.now() - cached.time < 10*60*1000) return cached.data;
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 12000);
-    try {
-      const res = await fetch(`https://api.github.com/repos/2dust/${repo}/releases?per_page=40`, {
-        headers:{Accept:'application/vnd.github+json'}, signal:controller.signal, cache:'no-store'
-      });
-      if (!res.ok) throw new Error(res.status === 403 || res.status === 429 ? 'گیت‌هاب فعلاً محدودیت درخواست داره.' : 'ارتباط با گیت‌هاب برقرار نشد.');
-      const data = await res.json();
-      if (!Array.isArray(data)) throw new Error('اطلاعات نسخه‌ها دریافت نشد.');
-      const stable = data.filter(r => r && !r.draft && !r.prerelease && Array.isArray(r.assets));
-      cache.set(repo, {time:Date.now(),data:stable});
-      return stable;
-    } catch (e) {
-      if (e.name === 'AbortError') throw new Error('گیت‌هاب دیر جواب داد.');
-      throw e;
-    } finally {clearTimeout(timeout);}
-  }
-  function errorView(message, repo) {
-    setStatus('خطا در دریافت نسخه', true);
-    panel.innerHTML = `<div class="error-box"><h3>فعلاً لینک دانلود بارگذاری نشد</h3><p>${esc(message)} می‌تونی دوباره امتحان کنی یا از صفحه رسمی برنامه دانلود کنی.</p><button class="retry" id="retry" type="button">تلاش دوباره</button><p><a class="official-link" href="${repoPage(repo)}" target="_blank" rel="noopener noreferrer">صفحه دانلود رسمی در GitHub ↗</a></p></div>`;
-    document.getElementById('retry').addEventListener('click', () => {cache.delete(repo);update();});
-  }
-  function render(release, assets, platform) {
-    const info = PLATFORMS[platform];
-    const preferred = pickPreferred(assets, platform);
-    const preferredUrl = validAssetUrl(preferred, info.repo);
-    const extras = assets.filter(a => a !== preferred);
-    setStatus('آخرین نسخه آماده‌ست');
-    panel.innerHTML = `
-      <div class="release-head">
-        <div><div class="release-title"><h3>${esc(info.title)}</h3><span class="version">${esc(release.tag_name)}</span></div><p class="release-meta">آخرین نسخه پایدار برای ${esc(info.name)}${release.published_at ? ' · '+esc(formatDate(release.published_at)) : ''}</p></div>
-        <a class="official-link" href="${repoPage(info.repo)}" target="_blank" rel="noopener noreferrer">GitHub رسمی ↗</a>
-      </div>
-      <div class="download-main">
-        <div class="download-info"><strong>دانلود پیشنهادی ${esc(info.name)} — ${esc(arch(preferred.name))}</strong><small>${esc(preferred.name)}${preferred.size ? ' · '+esc(formatSize(preferred.size)) : ''}</small></div>
-        <a class="main-download" href="${esc(preferredUrl)}" target="_blank" rel="noopener noreferrer">↓ دانلود آخرین نسخه</a>
-      </div>
-      ${extras.length ? `<p class="other-title">فایل‌های دیگه همین نسخه:</p><div class="asset-list">${extras.map(a => `<a class="asset-link" href="${esc(validAssetUrl(a, info.repo))}" target="_blank" rel="noopener noreferrer"><span><strong>${esc(arch(a.name))}</strong><small>${esc(a.name)}${a.size ? ' · '+esc(formatSize(a.size)) : ''}</small></span><span aria-hidden="true">↙</span></a>`).join('')}</div>` : ''}`;
-  }
-  async function update() {
-    const id = ++state.requestId;
-    const platform = state.platform;
-    const repo = PLATFORMS[platform].repo;
-    setStatus('در حال بررسی');
-    panel.innerHTML = '<div class="loading"><div class="spinner"></div><p>یه لحظه، داریم آخرین نسخه رو پیدا می‌کنیم…</p></div>';
-    try {
-      const releases = await getReleases(repo);
-      if (id !== state.requestId) return;
-      const release = releases.find(r => matchingAssets(r, platform).length);
-      if (!release) throw new Error('فایل مناسب این دستگاه پیدا نشد.');
-      render(release, matchingAssets(release, platform), platform);
-    } catch (e) {
-      if (id === state.requestId) errorView(e.message || 'مشکلی پیش اومده.', repo);
-    }
-  }
-  document.querySelectorAll('.platform').forEach(button => button.addEventListener('click', () => {
-    const next = button.dataset.platform;
-    if (!PLATFORMS[next] || next === state.platform) return;
-    state.platform = next;
-    document.querySelectorAll('.platform').forEach(tab => {
-      const active = tab === button;
-      tab.classList.toggle('active', active);
-      tab.setAttribute('aria-selected', String(active));
-    });
-    update();
-  }));
-  document.getElementById('year').textContent = String(new Date().getFullYear());
-  update();
+'use strict';
+const P={android:{repo:'v2rayNG',label:'اندروید',app:'v2rayNG'},windows:{repo:'v2rayN',label:'ویندوز',app:'v2rayN'},macos:{repo:'v2rayN',label:'مک',app:'v2rayN'},linux:{repo:'v2rayN',label:'لینوکس',app:'v2rayN'}};
+const panel=document.getElementById('release-content'),status=document.getElementById('api-status');
+const cache=new Map();let platform='android',serial=0;
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const official=repo=>`https://github.com/2dust/${repo}/releases`;
+const size=s=>s?`${(s/1048576).toFixed(1)} MB`:'';
+const assetUrl=(a,repo)=>{try{const u=new URL(a.browser_download_url);return u.protocol==='https:'&&u.hostname==='github.com'&&u.pathname.startsWith(`/2dust/${repo}/releases/download/`)?u.href:null}catch{return null}};
+function statusSet(msg,err=false){status.className='status'+(err?' error':'');status.innerHTML='<i></i>'+esc(msg)}
+function loading(){statusSet('در حال دریافت نسخه‌ها');panel.innerHTML='<div class="loading"><span class="loader"></span>در حال پیدا کردن آخرین نسخه…</div>'}
+async function fetchReleases(repo){let c=cache.get(repo);if(c&&Date.now()-c.t<600000)return c.v;const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),12000);try{const r=await fetch(`https://api.github.com/repos/2dust/${repo}/releases?per_page=10`,{headers:{Accept:'application/vnd.github+json'},signal:controller.signal});if(!r.ok)throw new Error(r.status===403||r.status===429?'محدودیت موقت GitHub':'اتصال به GitHub برقرار نشد');const v=(await r.json()).filter(x=>!x.draft&&!x.prerelease&&Array.isArray(x.assets));cache.set(repo,{t:Date.now(),v});return v}catch(e){throw new Error(e.name==='AbortError'?'پاسخ GitHub طول کشید':e.message||'خطا در دریافت اطلاعات')}finally{clearTimeout(timer)}}
+function assetsFor(release,key){const repo=P[key].repo;return release.assets.filter(a=>{const n=(a.name||'').toLowerCase();if(!assetUrl(a,repo)||/\.(sig|asc|sha256|sha512|txt|md5)$/.test(n))return false;if(key==='android')return n.endsWith('.apk');if(key==='windows')return /windows/.test(n)&&/\.zip$/.test(n);if(key==='macos')return /macos/.test(n)&&/\.(dmg|zip)$/.test(n);return /linux/.test(n)&&/\.(deb|rpm|zip)$/.test(n)})}
+const specs={
+android:[['نسخه عمومی','مناسب بیشتر گوشی‌های اندرویدی',n=>/universal/.test(n)],['ARM64','برای گوشی‌های جدیدتر',n=>/arm64|arm64-v8a/.test(n)],['ARM32','برای گوشی‌های قدیمی‌تر',n=>/armeabi|armv7/.test(n)],['x86 / x64','برای دستگاه‌های دارای پردازنده اینتل',n=>/x86|x64/.test(n)]],
+windows:[['ویندوز ۶۴ بیت','مناسب بیشتر کامپیوترها',n=>/windows-64\.zip$/.test(n)],['ویندوز ARM64','برای دستگاه‌های ARM',n=>/windows-arm64\.zip$/.test(n)],['ویندوز ۳۲ بیت','برای سیستم‌های ۳۲ بیت',n=>/windows-(86|32)\.zip$/.test(n)],['نسخه Desktop (۶۴ بیت)','رابط جایگزین برنامه',n=>/windows-64-desktop\.zip$/.test(n)]],
+macos:[['مک با تراشه Apple Silicon','M1، M2، M3، M4 و جدیدتر',n=>/macos-arm64\.dmg$/.test(n)],['مک با پردازنده Intel','نسخه Intel',n=>/macos-64\.dmg$/.test(n)],['Apple Silicon — ZIP','نسخه فشرده',n=>/macos-arm64\.zip$/.test(n)],['Intel — ZIP','نسخه فشرده',n=>/macos-64\.zip$/.test(n)]],
+linux:[['Ubuntu / Debian — ۶۴ بیت','فایل DEB',n=>/linux-64\.deb$/.test(n)],['Ubuntu / Debian — ARM64','فایل DEB',n=>/linux-arm64\.deb$/.test(n)],['Fedora / RHEL — ۶۴ بیت','فایل RPM',n=>/linux-(rhel-)?(x64|64)\.rpm$/.test(n)],['Fedora / RHEL — ARM64','فایل RPM',n=>/linux-(rhel-)?arm64\.rpm$/.test(n)],['نسخه پرتابل — ۶۴ بیت','فایل ZIP',n=>/linux-64\.zip$/.test(n)],['نسخه پرتابل — ARM64','فایل ZIP',n=>/linux-arm64\.zip$/.test(n)]]};
+function choices(assets,key){const used=new Set(),out=[];for(const [title,desc,match] of specs[key]){const a=assets.find(a=>!used.has(a.name)&&match(a.name.toLowerCase()));if(a){used.add(a.name);out.push({title,desc,a})}}if(key==='android'&&!out.length){for(const a of assets.filter(x=>/\.apk$/i.test(x.name)).slice(0,4))out.push({title:a.name.replace(/\.apk$/i,''),desc:'نسخه اندروید',a})}return out}
+function draw(release,items,key){const info=P[key];statusSet('آخرین نسخه آماده‌ست');let html=`<div class="result-head"><div><h3>دانلود <span class="latin">${info.app}</span> برای ${info.label}</h3><p class="result-sub">نسخه رسمی و به‌روز</p></div><span class="version">${esc(release.tag_name)}</span></div>`;
+if(!items.length){html+=`<div class="empty"><h3>فایل مناسب پیدا نشد</h3><p>برای دیدن همه نسخه‌ها از GitHub رسمی استفاده کن.</p></div>`}else{html+='<div class="choices">'+items.map(({title,desc,a},i)=>`<div class="choice${i===0?' primary':''}"><div class="choice-info"><b>${esc(title)}</b><p>${esc(desc)}</p><small>${esc(size(a.size))}</small></div><a class="download-btn" href="${esc(assetUrl(a,info.repo))}" target="_blank" rel="noopener noreferrer" aria-label="دانلود ${esc(title)}">↓ دانلود</a></div>`).join('')+'</div>'}
+html+=`<div class="result-bottom"><a class="official" href="${official(info.repo)}" target="_blank" rel="noopener noreferrer">مشاهده همه فایل‌ها در GitHub ↗</a></div>`;panel.innerHTML=html}
+function error(e,key){statusSet('دریافت نسخه ناموفق بود',true);panel.innerHTML=`<div class="empty"><h3>فعلاً نتونستیم نسخه‌ها رو بگیریم</h3><p>${esc(e.message)}. دوباره تلاش کن یا از GitHub رسمی دانلود کن.</p><button class="retry" type="button">تلاش دوباره</button><p><a class="official" href="${official(P[key].repo)}" target="_blank" rel="noopener noreferrer">دانلود از GitHub رسمی ↗</a></p></div>`;panel.querySelector('.retry').addEventListener('click',()=>{cache.delete(P[key].repo);update()})}
+async function update(){const key=platform,id=++serial;loading();try{const releases=await fetchReleases(P[key].repo);if(id!==serial)return;const r=releases.find(x=>assetsFor(x,key).length);if(!r)throw new Error('نسخه‌ای برای این دستگاه پیدا نشد');draw(r,choices(assetsFor(r,key),key),key)}catch(e){if(id===serial)error(e,key)}}
+for(const btn of document.querySelectorAll('.platform'))btn.addEventListener('click',()=>{if(btn.dataset.platform===platform)return;platform=btn.dataset.platform;for(const b of document.querySelectorAll('.platform')){const active=b===btn;b.classList.toggle('active',active);b.setAttribute('aria-selected',String(active))}update()});
+document.getElementById('year').textContent=new Date().getFullYear();update();
 })();
